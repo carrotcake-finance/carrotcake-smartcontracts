@@ -44,7 +44,7 @@ describe('Oracle', () => {
         [operator, whale] = await ethers.getSigners();
     });
 
-    let Dollar: ContractFactory;
+    let Cake: ContractFactory;
     let Share: ContractFactory;
     let Oracle: ContractFactory;
     let MockERC20: ContractFactory;
@@ -54,7 +54,7 @@ describe('Oracle', () => {
     let Router = new ContractFactory(UniswapV2Router.abi, UniswapV2Router.bytecode);
 
     before('fetch contract factories', async () => {
-        Dollar = await ethers.getContractFactory('Dollar');
+        Cake = await ethers.getContractFactory('Cake');
         Share = await ethers.getContractFactory('Share');
         Oracle = await ethers.getContractFactory('Oracle');
         MockERC20 = await ethers.getContractFactory('MockERC20');
@@ -76,7 +76,7 @@ describe('Oracle', () => {
 
     beforeEach('deploy contracts', async () => {
         dai = await MockERC20.connect(operator).deploy('Dai Stablecoin', 'DAI', 18);
-        dollar = await Dollar.connect(operator).deploy();
+        dollar = await Cake.connect(operator).deploy();
         share = await Share.connect(operator).deploy();
 
         await dai.connect(operator).mint(operator.address, ETH.mul(2));

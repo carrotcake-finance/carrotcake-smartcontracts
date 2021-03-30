@@ -6,17 +6,17 @@ import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol";
 
 import "./owner/Operator.sol";
 
-contract Dollar is ERC20Burnable, Operator {
-    uint256 public constant INITIAL_DISTRIBUTION = 210000 ether;
+contract Cake is ERC20Burnable, Operator {
+    uint256 public constant INITIAL_DISTRIBUTION = 155000 ether;
 
     bool public rewardPoolDistributed = false;
 
     /**
-     * @notice Constructs the bDollar ERC-20 contract.
+     * @notice Constructs the CarrotCake ERC-20 contract.
      */
-    constructor() public ERC20("bDollar", "BDO") {
-        // Mints 1 bDollar to contract creator for initial pool setup
-        _mint(msg.sender, 1 ether);
+    constructor() public ERC20("CarrotCake", "cCAKE") {
+        // Mints 0.1 CarrotCake to contract creator for initial pool setup
+        _mint(msg.sender, 0.1 ether);
     }
 
     /**

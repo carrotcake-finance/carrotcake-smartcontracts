@@ -48,7 +48,7 @@ describe("Treasury", () => {
 
     // core
     let Bond: ContractFactory;
-    let Dollar: ContractFactory;
+    let Cake: ContractFactory;
     let Share: ContractFactory;
     let Treasury: ContractFactory;
     let MockOracle: ContractFactory;
@@ -56,7 +56,7 @@ describe("Treasury", () => {
 
     before("fetch contract factories", async () => {
         Bond = await ethers.getContractFactory("Bond");
-        Dollar = await ethers.getContractFactory("Dollar");
+        Cake = await ethers.getContractFactory("Cake");
         Share = await ethers.getContractFactory("Share");
         Treasury = await ethers.getContractFactory("Treasury");
         MockOracle = await ethers.getContractFactory("MockOracle");
@@ -73,7 +73,7 @@ describe("Treasury", () => {
     let startTime: BigNumber;
 
     beforeEach("deploy contracts", async () => {
-        dollar = await Dollar.connect(operator).deploy();
+        dollar = await Cake.connect(operator).deploy();
         bond = await Bond.connect(operator).deploy();
         share = await Share.connect(operator).deploy();
         oracle = await MockOracle.connect(operator).deploy();
@@ -84,7 +84,7 @@ describe("Treasury", () => {
         await dollar.connect(operator).mint(treasury.address, utils.parseEther("10000"));
         await treasury.connect(operator).initialize(dollar.address, bond.address, share.address, startTime);
         await treasury.connect(operator).setBoardroom(boardroom.address);
-        await treasury.connect(operator).setDollarOracle(oracle.address);
+        await treasury.connect(operator).setCakeOracle(oracle.address);
 
         await treasury.connect(operator).setAllocateSeigniorageSalary(utils.parseEther("100"));
         await treasury.connect(operator).setMaxDiscountRate(utils.parseEther("1.3"));
@@ -159,7 +159,7 @@ describe("Treasury", () => {
             it("should fail if already migrated", async () => {
                 await newTreasury.connect(operator).initialize(dollar.address, bond.address, share.address, await latestBlocktime(provider));
                 await newTreasury.connect(operator).setBoardroom(boardroom.address);
-                await newTreasury.connect(operator).setDollarOracle(oracle.address);
+                await newTreasury.connect(operator).setCakeOracle(oracle.address);
 
                 await treasury.connect(operator).migrate(newTreasury.address);
                 await boardroom.connect(operator).transferOperator(newTreasury.address);
@@ -396,7 +396,7 @@ describe("Treasury", () => {
                 beforeEach("initialize treasury", async () => {
                     // await treasury.connect(operator).initialize(dollar.address, bond.address, share.address, startTime);
                     // await treasury.connect(operator).setBoardroom(boardroom.address);
-                    // await treasury.connect(operator).setDollarOracle(oracle.address);
+                    // await treasury.connect(operator).setCakeOracle(oracle.address);
                 });
 
                 it("should work if dollar price exceeds $1.05", async () => {

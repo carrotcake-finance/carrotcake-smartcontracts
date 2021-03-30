@@ -39,12 +39,12 @@ describe('BdoRewardPool.test', () => {
 
     // core
     let BdoRewardPool: ContractFactory;
-    let Dollar: ContractFactory;
+    let Cake: ContractFactory;
     let MockERC20: ContractFactory;
 
     before('fetch contract factories', async () => {
         BdoRewardPool = await ethers.getContractFactory('BdoRewardPool');
-        Dollar = await ethers.getContractFactory('Dollar');
+        Cake = await ethers.getContractFactory('Cake');
         MockERC20 = await ethers.getContractFactory('MockERC20');
     });
 
@@ -59,12 +59,12 @@ describe('BdoRewardPool.test', () => {
     let startBlock: BigNumber;
 
     before('deploy contracts', async () => {
-        dollar = await Dollar.connect(operator).deploy();
+        dollar = await Cake.connect(operator).deploy();
         dai = await MockERC20.connect(operator).deploy('Dai Stablecoin', 'DAI', 18);
         usdc = await MockERC20.connect(operator).deploy('USD Circle', 'USDC', 6);
         usdt = await MockERC20.connect(operator).deploy('Tether', 'USDT', 6);
         busd = await MockERC20.connect(operator).deploy('Binance USD', 'BUSD', 18);
-        esd = await MockERC20.connect(operator).deploy('Empty Set Dollar', 'ESD', 18);
+        esd = await MockERC20.connect(operator).deploy('Empty Set Cake', 'ESD', 18);
 
         startBlock = BigNumber.from(await latestBlocknumber(provider)).add(4);
         pool = await BdoRewardPool.connect(operator).deploy(dollar.address, startBlock);

@@ -2,7 +2,7 @@
   "name": "basisdollar-protocol",
   "version": "0.1.0",
   "description": "A lightweight implementation of the Basis Protocol on Ethereum",
-  "repository": "https://github.com/Basis-Dollar/basisdollar-protocol",
+  "repository": "https://github.com/Basis-Cake/basisdollar-protocol",
   "license": "MIT",
   "scripts": {
     "clean": "rm -rf './artifacts/' && rm -rf './build/' && rm -rf './cache/' && rm -rf './coverage/' && rm -rf './coverage.json' && rm -rf './typechain/'",

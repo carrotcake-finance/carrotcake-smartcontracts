@@ -53,7 +53,7 @@ contract MockBoardroom is IBoardroom, Operator {
         return 0;
     }
 
-    function getDollarPrice() external override view returns (uint256) {
+    function getCakePrice() external override view returns (uint256) {
         return 0;
     }
 

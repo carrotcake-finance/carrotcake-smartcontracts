@@ -466,11 +466,11 @@
   },
   {
     "inputs": [],
-    "name": "getBurnableDollarLeft",
+    "name": "getBurnableCakeLeft",
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "_burnableDollarLeft",
+        "name": "_burnableCakeLeft",
         "type": "uint256"
       }
     ],
@@ -479,7 +479,7 @@
   },
   {
     "inputs": [],
-    "name": "getDollarPrice",
+    "name": "getCakePrice",
     "outputs": [
       {
         "internalType": "uint256",
@@ -492,7 +492,7 @@
   },
   {
     "inputs": [],
-    "name": "getDollarUpdatedPrice",
+    "name": "getCakeUpdatedPrice",
     "outputs": [
       {
         "internalType": "uint256",
@@ -777,7 +777,7 @@
   },
   {
     "inputs": [],
-    "name": "previousEpochDollarPrice",
+    "name": "previousEpochCakePrice",
     "outputs": [
       {
         "internalType": "uint256",
@@ -936,7 +936,7 @@
         "type": "address"
       }
     ],
-    "name": "setDollarOracle",
+    "name": "setCakeOracle",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -949,7 +949,7 @@
         "type": "uint256"
       }
     ],
-    "name": "setDollarPriceCeiling",
+    "name": "setCakePriceCeiling",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

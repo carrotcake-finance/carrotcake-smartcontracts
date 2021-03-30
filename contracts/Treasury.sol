@@ -15,7 +15,7 @@ import "./interfaces/IOracle.sol";
 import "./interfaces/IBoardroom.sol";
 
 /**
- * @title Basis Dollar Treasury contract
+ * @title Basis Cake Treasury contract
  * @notice Monetary policy logic to adjust supplies of basis dollar assets
  * @author Summer Smith & Rick Sanchez
  */
@@ -56,7 +56,7 @@ contract Treasury is ContractGuard {
 
     uint256 public seigniorageSaved;
 
-    // protocol parameters - https://github.com/bearn-defi/bdollar-smartcontracts/tree/master/docs/ProtocolParameters.md
+    // protocol parameters - https://github.com/carrotcake-finance/carrotcake-smartcontracts/tree/master/docs/ProtocolParameters.md
     uint256 public maxSupplyExpansionPercent;
     uint256 public maxSupplyExpansionPercentInDebtPhase;
     uint256 public bondDepletionFloorPercent;
@@ -64,14 +64,14 @@ contract Treasury is ContractGuard {
     uint256 public maxSupplyContractionPercent;
     uint256 public maxDeptRatioPercent;
 
-    /* =================== BDOIPs (bDollar Improvement Proposals) =================== */
+    /* =================== BDOIPs (CarrotCake Improvement Proposals) =================== */
 
     // BDOIP01: 28 first epochs (1 week) with 4.5% expansion regardless of BDO price
     uint256 public bdoip01BootstrapEpochs;
     uint256 public bdoip01BootstrapSupplyExpansionPercent;
 
     /* =================== Added variables (need to keep orders for proxy to work) =================== */
-    uint256 public previousEpochDollarPrice;
+    uint256 public previousEpochCakePrice;
     uint256 public allocateSeigniorageSalary;
     uint256 public maxDiscountRate; // when purchasing bond
     uint256 public maxPremiumRate; // when redeeming bond
@@ -121,7 +121,7 @@ contract Treasury is ContractGuard {
         _;
 
         epoch = epoch.add(1);
-        epochSupplyContractionLeft = (getDollarPrice() > dollarPriceCeiling) ? 0 : IERC20(dollar).totalSupply().mul(maxSupplyContractionPercent).div(10000);
+        epochSupplyContractionLeft = (getCakePrice() > dollarPriceCeiling) ? 0 : IERC20(dollar).totalSupply().mul(maxSupplyContractionPercent).div(10000);
     }
 
     modifier checkOperator {
@@ -159,7 +159,7 @@ contract Treasury is ContractGuard {
     }
 
     // oracle
-    function getDollarPrice() public view returns (uint256 dollarPrice) {
+    function getCakePrice() public view returns (uint256 dollarPrice) {
         try IOracle(dollarOracle).consult(dollar, 1e18) returns (uint144 price) {
             return uint256(price);
         } catch {
@@ -167,7 +167,7 @@ contract Treasury is ContractGuard {
         }
     }
 
-    function getDollarUpdatedPrice() public view returns (uint256 _dollarPrice) {
+    function getCakeUpdatedPrice() public view returns (uint256 _dollarPrice) {
         try IOracle(dollarOracle).twap(dollar, 1e18) returns (uint144 price) {
             return uint256(price);
         } catch {
@@ -180,33 +180,33 @@ contract Treasury is ContractGuard {
         return seigniorageSaved;
     }
 
-    function getBurnableDollarLeft() public view returns (uint256 _burnableDollarLeft) {
-        uint256  _dollarPrice = getDollarPrice();
+    function getBurnableCakeLeft() public view returns (uint256 _burnableCakeLeft) {
+        uint256  _dollarPrice = getCakePrice();
         if (_dollarPrice <= dollarPriceOne) {
             uint256 _dollarSupply = IERC20(dollar).totalSupply();
             uint256 _bondMaxSupply = _dollarSupply.mul(maxDeptRatioPercent).div(10000);
             uint256 _bondSupply = IERC20(bond).totalSupply();
             if (_bondMaxSupply > _bondSupply) {
                 uint256 _maxMintableBond = _bondMaxSupply.sub(_bondSupply);
-                uint256 _maxBurnableDollar = _maxMintableBond.mul(_dollarPrice).div(1e18);
-                _burnableDollarLeft = Math.min(epochSupplyContractionLeft, _maxBurnableDollar);
+                uint256 _maxBurnableCake = _maxMintableBond.mul(_dollarPrice).div(1e18);
+                _burnableCakeLeft = Math.min(epochSupplyContractionLeft, _maxBurnableCake);
             }
         }
     }
 
     function getRedeemableBonds() public view returns (uint256 _redeemableBonds) {
-        uint256  _dollarPrice = getDollarPrice();
+        uint256  _dollarPrice = getCakePrice();
         if (_dollarPrice > dollarPriceCeiling) {
-            uint256 _totalDollar = IERC20(dollar).balanceOf(address(this));
+            uint256 _totalCake = IERC20(dollar).balanceOf(address(this));
             uint256 _rate = getBondPremiumRate();
             if (_rate > 0) {
-                _redeemableBonds = _totalDollar.mul(1e18).div(_rate);
+                _redeemableBonds = _totalCake.mul(1e18).div(_rate);
             }
         }
     }
 
     function getBondDiscountRate() public view returns (uint256 _rate) {
-        uint256 _dollarPrice = getDollarPrice();
+        uint256 _dollarPrice = getCakePrice();
         if (_dollarPrice <= dollarPriceOne) {
             if (discountPercent == 0) {
                 // no discount
@@ -223,7 +223,7 @@ contract Treasury is ContractGuard {
     }
 
     function getBondPremiumRate() public view returns (uint256 _rate) {
-        uint256 _dollarPrice = getDollarPrice();
+        uint256 _dollarPrice = getCakePrice();
         if (_dollarPrice > dollarPriceCeiling) {
             if (premiumPercent == 0) {
                 // no premium bonus
@@ -281,11 +281,11 @@ contract Treasury is ContractGuard {
         boardroom = _boardroom;
     }
 
-    function setDollarOracle(address _dollarOracle) external onlyOperator {
+    function setCakeOracle(address _dollarOracle) external onlyOperator {
         dollarOracle = _dollarOracle;
     }
 
-    function setDollarPriceCeiling(uint256 _dollarPriceCeiling) external onlyOperator {
+    function setCakePriceCeiling(uint256 _dollarPriceCeiling) external onlyOperator {
         require(_dollarPriceCeiling >= dollarPriceOne && _dollarPriceCeiling <= dollarPriceOne.mul(120).div(100), "out of range"); // [$1.0, $1.2]
         dollarPriceCeiling = _dollarPriceCeiling;
     }
@@ -389,14 +389,14 @@ contract Treasury is ContractGuard {
 
     /* ========== MUTABLE FUNCTIONS ========== */
 
-    function _updateDollarPrice() internal {
+    function _updateCakePrice() internal {
         try IOracle(dollarOracle).update() {} catch {}
     }
 
     function buyBonds(uint256 _dollarAmount, uint256 targetPrice) external onlyOneBlock checkCondition checkOperator {
         require(_dollarAmount > 0, "Treasury: cannot purchase bonds with zero amount");
 
-        uint256 dollarPrice = getDollarPrice();
+        uint256 dollarPrice = getCakePrice();
         require(dollarPrice == targetPrice, "Treasury: dollar price moved");
         require(
             dollarPrice < dollarPriceOne, // price < $1
@@ -417,7 +417,7 @@ contract Treasury is ContractGuard {
         IBasisAsset(bond).mint(msg.sender, _bondAmount);
 
         epochSupplyContractionLeft = epochSupplyContractionLeft.sub(_dollarAmount);
-        _updateDollarPrice();
+        _updateCakePrice();
 
         emit BoughtBonds(msg.sender, _dollarAmount, _bondAmount);
     }
@@ -425,7 +425,7 @@ contract Treasury is ContractGuard {
     function redeemBonds(uint256 _bondAmount, uint256 targetPrice) external onlyOneBlock checkCondition checkOperator {
         require(_bondAmount > 0, "Treasury: cannot redeem bonds with zero amount");
 
-        uint256 dollarPrice = getDollarPrice();
+        uint256 dollarPrice = getCakePrice();
         require(dollarPrice == targetPrice, "Treasury: dollar price moved");
         require(
             dollarPrice > dollarPriceCeiling, // price > $1.01
@@ -443,7 +443,7 @@ contract Treasury is ContractGuard {
         IBasisAsset(bond).burnFrom(msg.sender, _bondAmount);
         IERC20(dollar).safeTransfer(msg.sender, _dollarAmount);
 
-        _updateDollarPrice();
+        _updateCakePrice();
 
         emit RedeemedBonds(msg.sender, _dollarAmount, _bondAmount);
     }
@@ -475,16 +475,16 @@ contract Treasury is ContractGuard {
     }
 
     function allocateSeigniorage() external onlyOneBlock checkCondition checkEpoch checkOperator {
-        _updateDollarPrice();
-        previousEpochDollarPrice = getDollarPrice();
+        _updateCakePrice();
+        previousEpochCakePrice = getCakePrice();
         uint256 dollarSupply = IERC20(dollar).totalSupply().sub(seigniorageSaved);
         if (epoch < bdoip01BootstrapEpochs) {// BDOIP01: 28 first epochs with 4.5% expansion
             _sendToBoardRoom(dollarSupply.mul(bdoip01BootstrapSupplyExpansionPercent).div(10000));
         } else {
-            if (previousEpochDollarPrice > dollarPriceCeiling) {
+            if (previousEpochCakePrice > dollarPriceCeiling) {
                 // Expansion ($BDO Price > 1$): there is some seigniorage to be allocated
                 uint256 bondSupply = IERC20(bond).totalSupply();
-                uint256 _percentage = previousEpochDollarPrice.sub(dollarPriceOne);
+                uint256 _percentage = previousEpochCakePrice.sub(dollarPriceOne);
                 uint256 _savedForBond;
                 uint256 _savedForBoardRoom;
                 if (seigniorageSaved >= bondSupply.mul(bondDepletionFloorPercent).div(10000)) {// saved enough to pay dept, mint as usual rate

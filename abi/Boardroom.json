@@ -283,7 +283,7 @@
   },
   {
     "inputs": [],
-    "name": "getDollarPrice",
+    "name": "getCakePrice",
     "outputs": [
       {
         "internalType": "uint256",

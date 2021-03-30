@@ -30,7 +30,7 @@ contract Share is ERC20Burnable, Operator {
 
     bool public rewardPoolDistributed = false;
 
-    constructor() public ERC20("bDollar Share", "sBDO") {
+    constructor() public ERC20("CarrotCake Share", "sCAKE") {
         _mint(msg.sender, 1 ether); // mint 1 Basis Share for initial pools deployment
         devFund = msg.sender;
     }

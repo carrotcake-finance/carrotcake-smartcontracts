@@ -74,7 +74,7 @@ contract Boardroom is ShareWrapper, ContractGuard {
     mapping(address => Boardseat) public directors;
     BoardSnapshot[] public boardHistory;
 
-    // protocol parameters - https://github.com/bearn-defi/bdollar-smartcontracts/tree/master/docs/ProtocolParameters.md
+    // protocol parameters - https://github.com/carrotcake-finance/carrotcake-smartcontracts/tree/master/docs/ProtocolParameters.md
     uint256 public withdrawLockupEpochs;
     uint256 public rewardLockupEpochs;
 
@@ -181,8 +181,8 @@ contract Boardroom is ShareWrapper, ContractGuard {
         return treasury.nextEpochPoint();
     }
 
-    function getDollarPrice() external view returns (uint256) {
-        return treasury.getDollarPrice();
+    function getCakePrice() external view returns (uint256) {
+        return treasury.getCakePrice();
     }
 
     // =========== Director getters

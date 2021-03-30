@@ -30,14 +30,14 @@ describe("Boardroom", () => {
         [operator, whale, abuser, rewardPool] = await ethers.getSigners();
     });
 
-    let Dollar: ContractFactory;
+    let Cake: ContractFactory;
     let Bond: ContractFactory;
     let Share: ContractFactory;
     let Treasury: ContractFactory;
     let Boardroom: ContractFactory;
 
     before("fetch contract factories", async () => {
-        Dollar = await ethers.getContractFactory("Dollar");
+        Cake = await ethers.getContractFactory("Cake");
         Bond = await ethers.getContractFactory("Bond");
         Share = await ethers.getContractFactory("Share");
         Treasury = await ethers.getContractFactory("Treasury");
@@ -53,7 +53,7 @@ describe("Boardroom", () => {
     let startTime: BigNumber;
 
     beforeEach("deploy contracts", async () => {
-        dollar = await Dollar.connect(operator).deploy();
+        dollar = await Cake.connect(operator).deploy();
         bond = await Bond.connect(operator).deploy();
         share = await Share.connect(operator).deploy();
         treasury = await Treasury.connect(operator).deploy();

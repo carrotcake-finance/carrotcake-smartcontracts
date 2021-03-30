@@ -169,7 +169,7 @@ contract CommunityFund {
         kebab = _kebab;
     }
 
-    function setDollarOracle(address _dollarOracle) external onlyOperator {
+    function setCakeOracle(address _dollarOracle) external onlyOperator {
         dollarOracle = _dollarOracle;
     }
 
@@ -197,12 +197,12 @@ contract CommunityFund {
         maxAmountToTrade[wbnb] = _wbnbAmount;
     }
 
-    function setDollarPriceToSell(uint256 _dollarPriceToSell) external onlyStrategist {
+    function setCakePriceToSell(uint256 _dollarPriceToSell) external onlyStrategist {
         require(_dollarPriceToSell >= 950 finney && _dollarPriceToSell <= 2000 finney, "out of range"); // [$0.95, $2.00]
         dollarPriceToSell = _dollarPriceToSell;
     }
 
-    function setDollarPriceToBuy(uint256 _dollarPriceToBuy) external onlyStrategist {
+    function setCakePriceToBuy(uint256 _dollarPriceToBuy) external onlyStrategist {
         require(_dollarPriceToBuy >= 500 finney && _dollarPriceToBuy <= 1050 finney, "out of range"); // [$0.50, $1.05]
         dollarPriceToBuy = _dollarPriceToBuy;
     }
@@ -245,7 +245,7 @@ contract CommunityFund {
         }
     }
 
-    function getDollarPrice() public view returns (uint256 dollarPrice) {
+    function getCakePrice() public view returns (uint256 dollarPrice) {
         try IOracle(dollarOracle).consult(dollar, 1e18) returns (uint144 price) {
             return uint256(price);
         } catch {
@@ -253,7 +253,7 @@ contract CommunityFund {
         }
     }
 
-    function getDollarUpdatedPrice() public view returns (uint256 _dollarPrice) {
+    function getCakeUpdatedPrice() public view returns (uint256 _dollarPrice) {
         try IOracle(dollarOracle).twap(dollar, 1e18) returns (uint144 price) {
             return uint256(price);
         } catch {
@@ -289,7 +289,7 @@ contract CommunityFund {
             uint256 _dollarPercent = _dollarBal.mul(10000).div(_totalBal);
             uint256 _busdPercent = _busdBal.mul(10000).div(_totalBal);
             uint256 _wbnbPercent = _wbnbBal.mul(10000).div(_totalBal);
-            uint256 _dollarPrice = getDollarUpdatedPrice();
+            uint256 _dollarPrice = getCakeUpdatedPrice();
             if (_dollarPrice >= dollarPriceToSell) {// expansion: sell BDO
                 if (_dollarPercent > expansionPercent[0]) {
                     uint256 _sellingBdo = _dollarBal.mul(_dollarPercent.sub(expansionPercent[0])).div(10000);
@@ -345,24 +345,24 @@ contract CommunityFund {
     }
 
     function buyBonds(uint256 _dollarAmount) external onlyStrategist {
-        uint256 _dollarPrice = ITreasury(treasury).getDollarPrice();
+        uint256 _dollarPrice = ITreasury(treasury).getCakePrice();
         ITreasury(treasury).buyBonds(_dollarAmount, _dollarPrice);
         emit BoughtBonds(_dollarAmount);
     }
 
     function redeemBonds(uint256 _bondAmount) external onlyStrategist {
-        uint256 _dollarPrice = ITreasury(treasury).getDollarPrice();
+        uint256 _dollarPrice = ITreasury(treasury).getCakePrice();
         ITreasury(treasury).redeemBonds(_bondAmount, _dollarPrice);
         emit RedeemedBonds(_bondAmount);
     }
 
     function forceSell(address _buyingToken, uint256 _dollarAmount) external onlyStrategist {
-        require(getDollarUpdatedPrice() >= dollarPriceToBuy, "price is too low to sell");
+        require(getCakeUpdatedPrice() >= dollarPriceToBuy, "price is too low to sell");
         _swapToken(dollar, _buyingToken, _dollarAmount);
     }
 
     function forceBuy(address _sellingToken, uint256 _sellingAmount) external onlyStrategist {
-        require(getDollarUpdatedPrice() <= dollarPriceToSell, "price is too high to buy");
+        require(getCakeUpdatedPrice() <= dollarPriceToSell, "price is too high to buy");
         _swapToken(_sellingToken, dollar, _sellingAmount);
     }
 
@@ -521,8 +521,8 @@ contract CommunityFund {
                 uint256 _dollarBef = IERC20(dollar).balanceOf(address(this));
                 _swapToken(wbnb, dollar, _boughtWbnb.div(2));
                 uint256 _dollarAft = IERC20(dollar).balanceOf(address(this));
-                uint256 _boughtDollar = _dollarAft.sub(_dollarBef);
-                _addLiquidity(wbnb, _boughtDollar);
+                uint256 _boughtCake = _dollarAft.sub(_dollarBef);
+                _addLiquidity(wbnb, _boughtCake);
             }
         }
         address _lpAdd = pancakeFarmingPoolLpPairAddress;
@@ -582,8 +582,8 @@ contract CommunityFund {
                 uint256 _dollarBef = IERC20(dollar).balanceOf(address(this));
                 _swapToken(wbnb, dollar, _boughtWbnb.div(2));
                 uint256 _dollarAft = IERC20(dollar).balanceOf(address(this));
-                uint256 _boughtDollar = _dollarAft.sub(_dollarBef);
-                _addLiquidity(wbnb, _boughtDollar);
+                uint256 _boughtCake = _dollarAft.sub(_dollarBef);
+                _addLiquidity(wbnb, _boughtCake);
                 claimAndReinvestFromPancakePool();
             }
         }

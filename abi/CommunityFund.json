@@ -399,7 +399,7 @@
   },
   {
     "inputs": [],
-    "name": "getDollarPrice",
+    "name": "getCakePrice",
     "outputs": [
       {
         "internalType": "uint256",
@@ -412,7 +412,7 @@
   },
   {
     "inputs": [],
-    "name": "getDollarUpdatedPrice",
+    "name": "getCakeUpdatedPrice",
     "outputs": [
       {
         "internalType": "uint256",
@@ -662,7 +662,7 @@
         "type": "address"
       }
     ],
-    "name": "setDollarOracle",
+    "name": "setCakeOracle",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -675,7 +675,7 @@
         "type": "uint256"
       }
     ],
-    "name": "setDollarPriceToBuy",
+    "name": "setCakePriceToBuy",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -688,7 +688,7 @@
         "type": "uint256"
       }
     ],
-    "name": "setDollarPriceToSell",
+    "name": "setCakePriceToSell",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
